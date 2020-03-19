@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -30,45 +30,118 @@
         const Screem = document.getElementById("containerGame");
         const contextScrem = Screem.getContext('2d')
         
-        const state = {
-            players: {
-                'player1': {x: 10, y: 20},
-                'player2': {x: 50, y: 40}
-            },
-            fruits: {
-                'fruit1': {x: 30, y: 10}
+        
+
+        
+
+        function createGame (){
+
+            const state = {
+                players: {},
+                fruits: {}
+            }
+
+            function addPlayer(command) {
+                state.players[command.playerId] = {
+                    x: command.playerX,
+                    y: command.playerY
+                }
+                return command.playerId
+            }
+            function removePlayer(command) {
+                delete state.players[command.playerId]
+            }
+            function addFruit(command) {
+                state.fruits[command.fruitId] = {
+                    x: command.fruitX,
+                    y: command.fruitY
+                }
+            }
+            function removeFruit (command) {
+                delete state.fruits[command.fruitId]
+            }
+             function movePlayer (param){
+            
             }
             
-        }
-
-        const createGame = {
-            movePlayer: function (param){
+            return {
+                state,
+                addPlayer,
+                removePlayer,
+                addFruit,
+                removeFruit,
             }
         }
+        function rulesGame(player){
+            function borderLimiterXR (){
+                if (player.x >= 280){ return true } else{ return false }
+            }
+            function borderLimiterXL (){
+                if (player.x <= 0){ return true } else{ return false }
+            }
+            function borderLimiterYT (){
+                if (player.y <= 0){ return true } else{ return false }
+            }
+            function borderLimiterYB (){
+                if (player.y >= 280){ return true } else{ return false }
+            }
+            function chekForCollision () {
+                for( const fruitId in state.fruits) {
+                    const fruit = state.fruits[fruitId]
+                    console.log(`Player X: ${state.players[player].x} Y: ${state.players[player].y} Fruit X: ${fruit.x} Y: ${fruit.y} `)
+                    if( fruit.x === state.players[player].x && fruit.y === state.players[player].y){
+                        console.log(`Collision bitween ${fruitId} and ${state.players[player].playerId}`)
+                        game.removeFruit({fruitId: fruitId})
+                    }
+                }
+            }
+            return{
+                chekForCollision,
+                borderLimiterXR,
+                borderLimiterXL,
+                borderLimiterYT,
+                borderLimiterYB
+            }
+        }
+            
+
+        
         const aceptedKeys = {
-            'ArrowUp' : function (keypressd) {
-                state['players'].player1 = {x: state["players"].player1.x, y: state["players"].player1.y-1}
-            },'ArrowDown' : function (keypressd) {
-                state['players'].player1 = {x: state["players"].player1.x, y: state["players"].player1.y+1}
-            },'ArrowRight' : function (keypressd) {
-                state['players'].player1 = {x: state["players"].player1.x+1, y: state["players"].player1.y}
-            },'ArrowLeft' : function (keypressd) {
-                state['players'].player1 = {x: state["players"].player1.x-1, y: state["players"].player1.y}
+              'ArrowUp' : function (player) {
+                if (!rulesGame(player).borderLimiterYT()) {
+                    state.players[player] = {x: state.players[player].x, y: state.players[player].y-1};
+                }
+            },'ArrowDown' : function (player) {
+                if (!rulesGame(player).borderLimiterYB()) {
+                    state.players[player] = {x: state.players[player].x, y: state.players[player].y+1}
+                }
+            },'ArrowRight' : function (player) {
+                if (!rulesGame(player).borderLimiterXR()) {
+                    state.players[player] = {x: state.players[player].x+1, y: state.players[player].y}
+                }
+            },'ArrowLeft' : function (player) {
+                if (!rulesGame(player).borderLimiterXL()) {
+                    state.players[player] = {x: state.players[player].x-1, y: state.players[player].y}
+                }
             },
         }
 
+        
+
         document.addEventListener('keydown', keyDownPress)
-        const game = createGame
+
+        const game  = createGame()
+        const state = game.state
+
+        const lastPlayer = game.addPlayer({ playerId: 'player1', playerX: 22, playerY: 25 })
+        const fruit = game.addFruit({ fruitid: 'fruit1', fruitX: 22, fruitY: 25 })
+        const fruit1 = game.addFruit({ fruitid: 'fruit2', fruitX: 12, fruitY: 25 })
+
         function keyDownPress(event) {
             keypressd = event.key
-            const movePlayerFunction = aceptedKeys[keypressd]
-            movePlayerFunction()
-
-            const param = {
-                playerId: 'player1',
-                keypressd
-            }
-            //game.movePlayer(param).aceptedKeys[keypressd]
+            aceptedKeys[keypressd](lastPlayer)
+            rulesGame(lastPlayer).chekForCollision()
+            
         }
         
         renderScreen()
