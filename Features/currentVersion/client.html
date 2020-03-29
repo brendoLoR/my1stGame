@@ -26,14 +26,11 @@
 <body>
     <canvas id="containerGame" class="containerGame"></canvas>
 
-    <script>
+    <script type="module">
+        import createKeyBoardListener from './keyBoardListener.js'
         const Screem = document.getElementById("containerGame");
         const contextScrem = Screem.getContext('2d')
         
-        
-
-        
-
         function createGame (){
 
             const state = {
@@ -72,63 +69,12 @@
                 removeFruit,
             }
         }
-        function rulesGame(player){
-            function borderLimiterXR (){
-                if (player.x >= 280){ return true } else{ return false }
-            }
-            function borderLimiterXL (){
-                if (player.x <= 0){ return true } else{ return false }
-            }
-            function borderLimiterYT (){
-                if (player.y <= 0){ return true } else{ return false }
-            }
-            function borderLimiterYB (){
-                if (player.y >= 280){ return true } else{ return false }
-            }
-            function chekForCollision () {
-                for( const fruitId in state.fruits) {
-                    const fruit = state.fruits[fruitId]
-                    console.log(`Player X: ${state.players[player].x} Y: ${state.players[player].y} Fruit X: ${fruit.x} Y: ${fruit.y} `)
-                    if( fruit.x === state.players[player].x && fruit.y === state.players[player].y){
-                        console.log(`Collision bitween ${fruitId} and ${state.players[player].playerId}`)
-                        game.removeFruit({fruitId: fruitId})
-                    }
-                }
-            }
-            return{
-                chekForCollision,
-                borderLimiterXR,
-                borderLimiterXL,
-                borderLimiterYT,
-                borderLimiterYB
-            }
-        }
-            
-
         
-        const aceptedKeys = {
-              'ArrowUp' : function (player) {
-                if (!rulesGame(player).borderLimiterYT()) {
-                    state.players[player] = {x: state.players[player].x, y: state.players[player].y-1};
-                }
-            },'ArrowDown' : function (player) {
-                if (!rulesGame(player).borderLimiterYB()) {
-                    state.players[player] = {x: state.players[player].x, y: state.players[player].y+1}
-                }
-            },'ArrowRight' : function (player) {
-                if (!rulesGame(player).borderLimiterXR()) {
-                    state.players[player] = {x: state.players[player].x+1, y: state.players[player].y}
-                }
-            },'ArrowLeft' : function (player) {
-                if (!rulesGame(player).borderLimiterXL()) {
-                    state.players[player] = {x: state.players[player].x-1, y: state.players[player].y}
-                }
-            },
-        }
+        
 
         
 
-        document.addEventListener('keydown', keyDownPress)
+        
 
         const game  = createGame()
         const state = game.state
@@ -136,12 +82,10 @@
         const lastPlayer = game.addPlayer({ playerId: 'player1', playerX: 22, playerY: 25 })
         const fruit = game.addFruit({ fruitid: 'fruit1', fruitX: 22, fruitY: 25 })
         const fruit1 = game.addFruit({ fruitid: 'fruit2', fruitX: 12, fruitY: 25 })
-
-        function keyDownPress(event) {
-            keypressd = event.key
-            aceptedKeys[keypressd](lastPlayer)
-            rulesGame(lastPlayer).chekForCollision()
-            
+        document.addEventListener('keydown', keyCall)
+        
+        function keyCall(event){
+            game.state.players[lastPlayer] = createKeyBoardListener(state, game.state.players[lastPlayer]).keyDownPress(event)
         }
         
         renderScreen()
