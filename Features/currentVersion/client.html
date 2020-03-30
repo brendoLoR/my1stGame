@@ -1,116 +1,114 @@
 <DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-   <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <html lang="pt-br">
+
+    <head>
+        <meta charset="UTF-8">
+        <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
-    <title>Document</title>
-    <style>
-        body {
-            text-align: center;
-            background-color: gray;
-        }
-        #containerGame{
-            margin-top: 100px;
-            border: solid 10px gray ;
-            background-color: black;
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
-            image-rendering: -moz-crisp-edges;
-            width: 500px;
-            height: 500px;
-        }
-        
-    </style>
-</head>
-<body>
-    <canvas id="containerGame" class="containerGame"></canvas>
-
-    <script type="module">
-        import createKeyBoardListener from './keyBoardListenerRev1.js'
-        const Screem = document.getElementById("containerGame");
-        const contextScrem = Screem.getContext('2d')
-        
-        function createGame (){
-
-            const state = {
-                players: {},
-                fruits: {}
+        <title>Document</title>
+        <style>
+            body {
+                text-align: center;
+                background-color: gray;
             }
 
-            function addPlayer(command) {
-                state.players[command.playerId] = {
-                    x: command.playerX,
-                    y: command.playerY
+            #containerGame {
+                margin-top: 100px;
+                border: solid 10px gray;
+                background-color: black;
+                image-rendering: pixelated;
+                image-rendering: crisp-edges;
+                image-rendering: -moz-crisp-edges;
+                width: 500px;
+                height: 500px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <canvas id="containerGame" class="containerGame"></canvas>
+
+        <script src="./RulesGame.js">
+            const createKeyBoardListener = null;
+            const Screem = document.getElementById("containerGame");
+            const contextScrem = Screem.getContext('2d')
+
+            function createGame() {
+
+                const state = {
+                    players: {},
+                    fruits: {}
                 }
-                return command.playerId
-            }
-            function removePlayer(command) {
-                delete state.players[command.playerId]
-            }
-            function addFruit(command) {
-                state.fruits[command.fruitId] = {
-                    x: command.fruitX,
-                    y: command.fruitY
+
+                function addPlayer(command) {
+                    state.players[command.playerId] = {
+                        x: command.playerX,
+                        y: command.playerY
+                    }
+                    return command.playerId
+                }
+                function removePlayer(command) {
+                    delete state.players[command.playerId]
+                }
+                function addFruit(command) {
+                    state.fruits[command.fruitId] = {
+                        x: command.fruitX,
+                        y: command.fruitY
+                    }
+                }
+                function removeFruit(command) {
+                    delete state.fruits[command.fruitId]
+                }
+                function movePlayer(param) {
+
+                }
+
+                return {
+                    state,
+                    addPlayer,
+                    removePlayer,
+                    addFruit,
+                    removeFruit,
                 }
             }
-            function removeFruit (command) {
-                delete state.fruits[command.fruitId]
-            }
-             function movePlayer (param){
-            
-            }
-            
-            return {
-                state,
-                addPlayer,
-                removePlayer,
-                addFruit,
-                removeFruit,
-            }
-        }
-        
-        
 
-        
+            const game = createGame()
+            const state = game.state
 
-        
+            const lastPlayer = game.addPlayer({ playerId: 'player1', playerX: 22, playerY: 25 })
+            const fruit = game.addFruit({ fruitid: 'fruit1', fruitX: 22, fruitY: 25 })
+            const fruit1 = game.addFruit({ fruitid: 'fruit2', fruitX: 12, fruitY: 25 })
+            document.addEventListener(() => { 'keydown', keyCall })
 
-        const game  = createGame()
-        const state = game.state
-
-        const lastPlayer = game.addPlayer({ playerId: 'player1', playerX: 22, playerY: 25 })
-        const fruit = game.addFruit({ fruitid: 'fruit1', fruitX: 22, fruitY: 25 })
-        const fruit1 = game.addFruit({ fruitid: 'fruit2', fruitX: 12, fruitY: 25 })
-        document.addEventListener('keydown', keyCall)
-        
-        function keyCall(event){
-            const temp = createKeyBoardListener(state, game.state.players[lastPlayer]).keyDownPress(event)
-            console.log(temp)
-            game.state.players[lastPlayer] = {
-                x: temp.x,
-                y: temp.y
+            createKeyBoardListener = new RulesGame(state, game.state.players[lastPlayer]);
+            function keyCall(event) {
+                const temp = createKeyBoardListener.keyDownPress(event);
+                console.log(temp);
+                game.state.players[lastPlayer] = {
+                    x: temp.x,
+                    y: temp.y
+                };
             }
-        }
-        
-        renderScreen()
-        function renderScreen (){
-            contextScrem.clearRect(0, 0, 500 , 500)
-            
-            for (const playerId in state.players){
-                const player = state.players[playerId]
-                contextScrem.fillStyle = 'white'
-                contextScrem.fillRect( player.x, player.y, 20, 10)
-            }
-            for (const fruitsId in state.fruits){
-                const fruit = state.fruits[fruitsId]
-                contextScrem.fillStyle = 'green'
-                contextScrem.fillRect( fruit.x, fruit.y, 20, 10)
-            }
-            requestAnimationFrame(renderScreen)
-        }
-        
 
-    </script>
-</body>
-</html>
+            renderScreen()
+            function renderScreen() {
+                contextScrem.clearRect(0, 0, 500, 500)
+
+                for (const playerId in state.players) {
+                    const player = state.players[playerId]
+                    contextScrem.fillStyle = 'white'
+                    contextScrem.fillRect(player.x, player.y, 20, 10)
+                }
+                for (const fruitsId in state.fruits) {
+                    const fruit = state.fruits[fruitsId]
+                    contextScrem.fillStyle = 'green'
+                    contextScrem.fillRect(fruit.x, fruit.y, 20, 10)
+                }
+                requestAnimationFrame(renderScreen)
+            }
+
+
+        </script>
+    </body>
+
+    </html>
