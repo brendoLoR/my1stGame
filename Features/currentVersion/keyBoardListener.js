@@ -12,15 +12,16 @@ export default function createKeyBoardListener (state, lastPlayer){
                 function borderLimiterYB (){
                     if (lastPlayer.y >= 280){ return true } else{ return false }
                 }
-                function chekForCollision () {
-                    for( const fruitId in state.fruits) {
-                        const fruit = state.fruits[fruitId]
-                        console.log(`Player X: ${lastPlayer.x} Y: ${lastPlayer.y} Fruit X: ${fruit.x} Y: ${fruit.y} `)
-                        if( fruit.x === lastPlayer.x && fruit.y === lastPlayer.y){
-                            console.log(`Collision bitween ${fruitId} and ${lastPlayer.playerId}`)
-                            game.removeFruit({fruitId: fruitId})
-                        }
+                function chekForCollision (fruit, fruitId) {
+                    //console.log()
+                    //console.log(`${fruitId} X: ${lastPlayer.x} Y: ${lastPlayer.y} Fruit X: ${fruit.x} Y: ${fruit.y} `)
+                    if( fruit.x === lastPlayer.x && fruit.y === lastPlayer.y){
+                        console.log(`Collision bitween ${fruitId} and ${lastPlayer.playerId}`)
+                        return true
+                    }else{
+                        return false
                     }
+                    
                 }
                 return{
                     chekForCollision,
@@ -36,11 +37,11 @@ export default function createKeyBoardListener (state, lastPlayer){
                 'ArrowUp' : function () {
                     if (!rulesGame().borderLimiterYT()) {
                         console.log(lastPlayer)
-                        return {x: lastPlayer.x, y: lastPlayer.y-1};
+                        return  {x: lastPlayer.x, y: lastPlayer.y-1}
                     }
                 },'ArrowDown' : function () {
                     if (!rulesGame().borderLimiterYB()) {
-                        return {x: lastPlayer.x, y: state.players[player].y+1}
+                        return {x: lastPlayer.x, y: lastPlayer.y+1}
                     }
                 },'ArrowRight' : function () {
                     if (!rulesGame().borderLimiterXR()) {
@@ -56,8 +57,9 @@ export default function createKeyBoardListener (state, lastPlayer){
             function keyDownPress(event) {
                 console.log(event.key)
                 const keypressd = event.key
-                aceptedKeys[keypressd]()
-                rulesGame().chekForCollision()
+                const temp = aceptedKeys[keypressd]()
+                //rulesGame().chekForCollision()
+                return temp
                 
             }
             return {

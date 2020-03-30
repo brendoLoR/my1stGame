@@ -27,7 +27,7 @@
     <canvas id="containerGame" class="containerGame"></canvas>
 
     <script type="module">
-        import createKeyBoardListener from './keyBoardListener.js'
+        import createKeyBoardListener from './keyBoardListenerRev1.js'
         const Screem = document.getElementById("containerGame");
         const contextScrem = Screem.getContext('2d')
         
@@ -85,13 +85,18 @@
         document.addEventListener('keydown', keyCall)
         
         function keyCall(event){
-            game.state.players[lastPlayer] = createKeyBoardListener(state, game.state.players[lastPlayer]).keyDownPress(event)
+            const temp = createKeyBoardListener(state, game.state.players[lastPlayer]).keyDownPress(event)
+            console.log(temp)
+            game.state.players[lastPlayer] = {
+                x: temp.x,
+                y: temp.y
+            }
         }
         
         renderScreen()
         function renderScreen (){
             contextScrem.clearRect(0, 0, 500 , 500)
-
+            
             for (const playerId in state.players){
                 const player = state.players[playerId]
                 contextScrem.fillStyle = 'white'
