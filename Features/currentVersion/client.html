@@ -12,7 +12,7 @@
         }
         #containerGame{
             margin-top: 100px;
-            border: solid 10px gray ;
+            border: solid 10px gray;
             background-color: black;
             image-rendering: pixelated;
             image-rendering: crisp-edges;
@@ -27,7 +27,7 @@
     <canvas id="containerGame" class="containerGame"></canvas>
 
     <script type="module">
-        import createKeyBoardListener from './keyBoardListenerRev1.js'
+        import globalRules from './keyBoardListenerRev1.js'
         const Screem = document.getElementById("containerGame");
         const contextScrem = Screem.getContext('2d')
         
@@ -59,11 +59,11 @@
                 }
             }
             function removeFruit (command) {
-                try{
+                //try{
                     delete state.fruits[command.fruitId]
-                }catch(e){
-                    console.log(e)
-                }
+              //  }catch(e){
+                  //  console.log(e)
+               // }
             }
              function movePlayer (param){
             
@@ -79,36 +79,39 @@
         }
         
         const game  = createGame()
-        const state = game.state
 
         const lastPlayer = game.addPlayer({ playerId: 'player1', playerX: 50, playerY: 50 })
         const fruit = game.addFruit({ fruitId: 'fruit1', fruitX: 103, fruitY: 25 })
         const fruit1 = game.addFruit({ fruitId: 'fruit2', fruitX: 12, fruitY: 25 })
-        console.log(game.state.players[lastPlayer])
+        const keyBoardListener = new globalRules(game.state, game.state.players[lastPlayer])
+       // console.log(game.state.players[lastPlayer])
+
         document.addEventListener('keydown', keyCall)
-        
+
         function keyCall(event){
-            var keyBoardListener = new createKeyBoardListener(state, game.state.players[lastPlayer])
             const result = keyBoardListener.keyDownPress(event)
-            game.removeFruit(result.fruitId)
-            console.log(result.keyResult)
+
             game.state.players[lastPlayer] = {
                 x: result.keyResult.x,
                 y: result.keyResult.y
             }
+            
+            keyBoardListener.setState(game.state, lastPlayer)
+            
+            game.removeFruit({fruitId: keyBoardListener.chekForCollision()})
         }
         
         renderScreen()
         function renderScreen (){
             contextScrem.clearRect(0, 0, 500 , 500)
             
-            for (const playerId in state.players){
-                const player = state.players[playerId]
+            for (const playerId in game.state.players){
+                const player = game.state.players[playerId]
                 contextScrem.fillStyle = 'white'
                 contextScrem.fillRect( player.x, player.y, 20, 10)
             }
-            for (const fruitsId in state.fruits){
-                const fruit = state.fruits[fruitsId]
+            for (const fruitsId in game.state.fruits){
+                const fruit = game.state.fruits[fruitsId]
                 contextScrem.fillStyle = 'green'
                 contextScrem.fillRect( fruit.x, fruit.y, 20, 10)
             }

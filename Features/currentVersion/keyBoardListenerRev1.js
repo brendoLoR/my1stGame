@@ -1,9 +1,14 @@
-export default class createKeyBoardListener{
+export default class globalRules{
     constructor(state, lastPlayer){
         this.state = state
         this.players = state.players
         this.fruits = state.fruits
         this.lastPlayer = lastPlayer
+        //console.log(this.fruits)
+    }
+    setState(newState, lastPlayerId) {
+        this.state = newState
+        this.lastPlayer = newState.players[lastPlayerId]
     }
     rulesGame(command){
         switch (command){
@@ -24,14 +29,13 @@ export default class createKeyBoardListener{
         //console.log()
         //console.log(`${fruitId} X: ${lastPlayer.x} Y: ${lastPlayer.y} Fruit X: ${fruit.x} Y: ${fruit.y} `)
         for(const fruitId in this.fruits){
-            console.log('here')
+            //console.log(fruitId)
             if( this.fruits[fruitId].x === this.lastPlayer.x && this.fruits[fruitId].y === this.lastPlayer.y){
             console.log(`Collision bitween ${fruitId} and ${this.lastPlayer}`)
             return fruitId
-            }else{
-                return false
             }
         }
+        return false
     }
         
     aceptedKeys(keypressd){
