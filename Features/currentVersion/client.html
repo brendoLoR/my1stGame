@@ -46,7 +46,11 @@
                 return command.playerId
             }
             function removePlayer(command) {
-                delete state.players[command.playerId]
+                try{
+                    delete state.players[command.playerId]
+                }catch(e){
+                    console.log(e)
+                }
             }
             function addFruit(command) {
                 state.fruits[command.fruitId] = {
@@ -55,7 +59,11 @@
                 }
             }
             function removeFruit (command) {
-                delete state.fruits[command.fruitId]
+                try{
+                    delete state.fruits[command.fruitId]
+                }catch(e){
+                    console.log(e)
+                }
             }
              function movePlayer (param){
             
@@ -70,26 +78,23 @@
             }
         }
         
-        
-
-        
-
-        
-
         const game  = createGame()
         const state = game.state
 
-        const lastPlayer = game.addPlayer({ playerId: 'player1', playerX: 22, playerY: 25 })
-        const fruit = game.addFruit({ fruitid: 'fruit1', fruitX: 22, fruitY: 25 })
-        const fruit1 = game.addFruit({ fruitid: 'fruit2', fruitX: 12, fruitY: 25 })
+        const lastPlayer = game.addPlayer({ playerId: 'player1', playerX: 50, playerY: 50 })
+        const fruit = game.addFruit({ fruitId: 'fruit1', fruitX: 103, fruitY: 25 })
+        const fruit1 = game.addFruit({ fruitId: 'fruit2', fruitX: 12, fruitY: 25 })
+        console.log(game.state.players[lastPlayer])
         document.addEventListener('keydown', keyCall)
         
         function keyCall(event){
-            const temp = createKeyBoardListener(state, game.state.players[lastPlayer]).keyDownPress(event)
-            console.log(temp)
+            var keyBoardListener = new createKeyBoardListener(state, game.state.players[lastPlayer])
+            const result = keyBoardListener.keyDownPress(event)
+            game.removeFruit(result.fruitId)
+            console.log(result.keyResult)
             game.state.players[lastPlayer] = {
-                x: temp.x,
-                y: temp.y
+                x: result.keyResult.x,
+                y: result.keyResult.y
             }
         }
         
@@ -110,7 +115,6 @@
             requestAnimationFrame(renderScreen)
         }
         
-
     </script>
 </body>
 </html>

@@ -1,73 +1,71 @@
-module.exports = class createKeyBoardListener{
+export default class createKeyBoardListener{
     constructor(state, lastPlayer){
         this.state = state
+        this.players = state.players
+        this.fruits = state.fruits
         this.lastPlayer = lastPlayer
-
     }
-    rulesGame(){
-        function borderLimiterXR (){
-            if (lastPlayer.x >= 280){ return true } else{ return false }
+    rulesGame(command){
+        switch (command){
+            case  'borderLimiterXR' :
+                if (this.lastPlayer.x >= 280){ return true } else{ return false }
+            case  'borderLimiterXL' :
+                if (this.lastPlayer.x <= 0){ return true } else{ return false }
+            case  'borderLimiterYT' :
+                if (this.lastPlayer.y <= 0){ return true } else{ return false }
+            case  'borderLimiterYB' :
+                if (this.lastPlayer.y >= 140){ return true } else{ return false }
+               
         }
-        function borderLimiterXL (){
-            if (lastPlayer.x <= 0){ return true } else{ return false }
-        }
-        function borderLimiterYT (){
-            if (lastPlayer.y <= 0){ return true } else{ return false }
-        }
-        function borderLimiterYB (){
-            if (lastPlayer.y >= 280){ return true } else{ return false }
-        }
-        function chekForCollision (fruit, fruitId) {
-            //console.log()
-            //console.log(`${fruitId} X: ${lastPlayer.x} Y: ${lastPlayer.y} Fruit X: ${fruit.x} Y: ${fruit.y} `)
-            if( fruit.x === lastPlayer.x && fruit.y === lastPlayer.y){
-                console.log(`Collision bitween ${fruitId} and ${lastPlayer.playerId}`)
-                return true
+    }
+       
+    
+    chekForCollision () {
+        //console.log()
+        //console.log(`${fruitId} X: ${lastPlayer.x} Y: ${lastPlayer.y} Fruit X: ${fruit.x} Y: ${fruit.y} `)
+        for(const fruitId in this.fruits){
+            console.log('here')
+            if( this.fruits[fruitId].x === this.lastPlayer.x && this.fruits[fruitId].y === this.lastPlayer.y){
+            console.log(`Collision bitween ${fruitId} and ${this.lastPlayer}`)
+            return fruitId
             }else{
                 return false
             }
-            
         }
-        return{
-            chekForCollision,
-            borderLimiterXR,
-            borderLimiterXL,
-            borderLimiterYT,
-            borderLimiterYB
-        }
-
     }
-    
-    checkKyes(){
-        aceptedKeys = {
-            'ArrowUp' : function () {
-                if (!rulesGame().borderLimiterYT()) {
-                    console.log(lastPlayer)
-                    return  {x: lastPlayer.x, y: lastPlayer.y-1}
+        
+    aceptedKeys(keypressd){
+        switch (keypressd) {
+            case 'ArrowUp':
+                if (!this.rulesGame('borderLimiterYT')) {
+                    console.log(this.lastPlayer)
+                    return  {x: this.lastPlayer.x, y: this.lastPlayer.y-1}
                 }
-            },'ArrowDown' : function () {
-                if (!rulesGame().borderLimiterYB()) {
-                    return {x: lastPlayer.x, y: lastPlayer.y+1}
-                }
-            },'ArrowRight' : function () {
-                if (!rulesGame().borderLimiterXR()) {
-                    return {x: lastPlayer.x+1, y: lastPlayer.y}
-                }
-            },'ArrowLeft' : function () {
-                if (!rulesGame().borderLimiterXL()) {
-                    return {x: lastPlayer.x-1, y: lastPlayer.y}
-                }
-            },
+                break
+            case 'ArrowDown' :
+                if (!this.rulesGame('borderLimiterYB')) { return {x: this.lastPlayer.x, y: this.lastPlayer.y+1} }
+                break
+            case'ArrowRight' : 
+                if (!this.rulesGame('borderLimiterXR')) { return {x: this.lastPlayer.x+1, y: this.lastPlayer.y} }
+                break
+            case'ArrowLeft' : 
+                if (!this.rulesGame('borderLimiterXL')) { return {x: this.lastPlayer.x-1, y: this.lastPlayer.y} }
+                break
+            default :
+                console.log(`wrong key pressed`)
+                break
         }
-        return aceptedKeys
     }
     
     keyDownPress(event) {
         console.log(event.key)
         const keypressd = event.key
-        const temp = checkKyes().aceptedKeys[keypressd]()
-        //rulesGame().chekForCollision()
-        return temp
+        const keyResult = this.aceptedKeys(keypressd)
+        const fruitId = this.chekForCollision()
+        return {
+            keyResult,
+            fruitId
+        }
         
     }
     
