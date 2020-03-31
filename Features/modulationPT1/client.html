@@ -1,0 +1,123 @@
+<DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+   <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
+    <title>Document</title>
+    <style>
+        body {
+            text-align: center;
+            background-color: gray;
+        }
+        #containerGame{
+            margin-top: 100px;
+            border: solid 10px gray;
+            background-color: black;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            image-rendering: -moz-crisp-edges;
+            width: 500px;
+            height: 500px;
+        }
+        
+    </style>
+</head>
+<body>
+    <canvas id="containerGame" class="containerGame"></canvas>
+
+    <script type="module">
+        import globalRules from './keyBoardListenerRev1.js'
+        const Screem = document.getElementById("containerGame");
+        const contextScrem = Screem.getContext('2d')
+        
+        function createGame (){
+
+            const state = {
+                players: {},
+                fruits: {}
+            }
+
+            function addPlayer(command) {
+                state.players[command.playerId] = {
+                    x: command.playerX,
+                    y: command.playerY
+                }
+                return command.playerId
+            }
+            function removePlayer(command) {
+                try{
+                    delete state.players[command.playerId]
+                }catch(e){
+                    console.log(e)
+                }
+            }
+            function addFruit(command) {
+                state.fruits[command.fruitId] = {
+                    x: command.fruitX,
+                    y: command.fruitY
+                }
+            }
+            function removeFruit (command) {
+                //try{
+                    delete state.fruits[command.fruitId]
+              //  }catch(e){
+                  //  console.log(e)
+               // }
+            }
+             function movePlayer (param){
+            
+            }
+            
+            return {
+                state,
+                addPlayer,
+                removePlayer,
+                addFruit,
+                removeFruit,
+            }
+        }
+        
+        const game  = createGame()
+
+        const lastPlayer = game.addPlayer({ playerId: 'player1', playerX: 50, playerY: 50 })
+        const fruit = game.addFruit({ fruitId: 'fruit1', fruitX: 103, fruitY: 25 })
+        const fruit1 = game.addFruit({ fruitId: 'fruit2', fruitX: 12, fruitY: 25 })
+        const keyBoardListener = new globalRules(game.state, game.state.players[lastPlayer])
+       // console.log(game.state.players[lastPlayer])
+
+        document.addEventListener('keydown', keyCall)
+
+        function keyCall(event){
+            const result = keyBoardListener.keyDownPress(event)
+
+            game.state.players[lastPlayer] = {
+                x: result.keyResult.x,
+                y: result.keyResult.y
+            }
+            
+            keyBoardListener.setState(game.state, lastPlayer)
+            
+            game.removeFruit({fruitId: keyBoardListener.chekForCollision()})
+        }
+        
+        renderScreen()
+        function renderScreen (){
+            contextScrem.clearRect(0, 0, 500 , 500)
+            
+            for (const playerId in game.state.players){
+                const player = game.state.players[playerId]
+                contextScrem.fillStyle = 'white'
+                contextScrem.fillRect( player.x, player.y, 20, 10)
+            }
+            for (const fruitsId in game.state.fruits){
+                const fruit = game.state.fruits[fruitsId]
+                contextScrem.fillStyle = 'green'
+                contextScrem.fillRect( fruit.x, fruit.y, 20, 10)
+            }
+            requestAnimationFrame(renderScreen)
+        }
+        
+    </script>
+</body>
+</html>
