@@ -27,78 +27,33 @@
     <canvas id="containerGame" class="containerGame"></canvas>
 
     <script type="module">
-        import globalRules from './keyBoardListenerRev1.js'
+        import globalRules from './globalRules.js'
+        import createGame from './createGame.js'
         const Screem = document.getElementById("containerGame");
         const contextScrem = Screem.getContext('2d')
         
-        function createGame (){
+        const game  = new createGame()
 
-            const state = {
-                players: {},
-                fruits: {}
-            }
-
-            function addPlayer(command) {
-                state.players[command.playerId] = {
-                    x: command.playerX,
-                    y: command.playerY
-                }
-                return command.playerId
-            }
-            function removePlayer(command) {
-                try{
-                    delete state.players[command.playerId]
-                }catch(e){
-                    console.log(e)
-                }
-            }
-            function addFruit(command) {
-                state.fruits[command.fruitId] = {
-                    x: command.fruitX,
-                    y: command.fruitY
-                }
-            }
-            function removeFruit (command) {
-                //try{
-                    delete state.fruits[command.fruitId]
-              //  }catch(e){
-                  //  console.log(e)
-               // }
-            }
-             function movePlayer (param){
-            
-            }
-            
-            return {
-                state,
-                addPlayer,
-                removePlayer,
-                addFruit,
-                removeFruit,
-            }
-        }
-        
-        const game  = createGame()
-
-        const lastPlayer = game.addPlayer({ playerId: 'player1', playerX: 50, playerY: 50 })
+        const lastPlayer = game.addPlayer({ playerId: 'player1', playerX: 50, playerY: 50, score: 0 })
         const fruit = game.addFruit({ fruitId: 'fruit1', fruitX: 103, fruitY: 25 })
         const fruit1 = game.addFruit({ fruitId: 'fruit2', fruitX: 12, fruitY: 25 })
-        const keyBoardListener = new globalRules(game.state, game.state.players[lastPlayer])
+        const keyBoardListener = new globalRules(game.state, game.state.players[lastPlayer], lastPlayer)
        // console.log(game.state.players[lastPlayer])
 
         document.addEventListener('keydown', keyCall)
 
         function keyCall(event){
             const result = keyBoardListener.keyDownPress(event)
-
-            game.state.players[lastPlayer] = {
-                x: result.keyResult.x,
-                y: result.keyResult.y
-            }
+            game.movePlayer({ playerId: lastPlayer, x: result.keyResult.x, y: result.keyResult.y })
+            
             
             keyBoardListener.setState(game.state, lastPlayer)
-            
-            game.removeFruit({fruitId: keyBoardListener.chekForCollision()})
+            const check = keyBoardListener.chekForCollision()
+            if(check){
+                game.removeFruit({fruitId: check})
+                game.scoreIncrement({ playerId: lastPlayer, score: 1 })
+                console.log(game.state.players[lastPlayer].score)
+            }
         }
         
         renderScreen()
