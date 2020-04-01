@@ -1,5 +1,5 @@
 <DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,48 +29,49 @@
     <script type="module">
         import globalRules from './globalRules.js'
         import createGame from './createGame.js'
-        const Screem = document.getElementById("containerGame");
-        const contextScrem = Screem.getContext('2d')
+
+        const Screem = document.getElementById( "containerGame" );
+        const contextScrem = Screem.getContext( '2d' )
         
         const game  = new createGame()
 
         const lastPlayer = game.addPlayer({ playerId: 'player1', playerX: 50, playerY: 50, score: 0 })
         const fruit = game.addFruit({ fruitId: 'fruit1', fruitX: 103, fruitY: 25 })
         const fruit1 = game.addFruit({ fruitId: 'fruit2', fruitX: 12, fruitY: 25 })
-        const keyBoardListener = new globalRules(game.state, game.state.players[lastPlayer], lastPlayer)
-       // console.log(game.state.players[lastPlayer])
 
-        document.addEventListener('keydown', keyCall)
+        const keyBoardListener = new globalRules( game.state, game.state.players[lastPlayer], lastPlayer )
 
-        function keyCall(event){
-            const result = keyBoardListener.keyDownPress(event)
+        document.addEventListener( 'keydown', keyCall )
+
+        function keyCall( event ){
+            const result = keyBoardListener.keyDownPress( event )
             game.movePlayer({ playerId: lastPlayer, x: result.keyResult.x, y: result.keyResult.y })
             
             
-            keyBoardListener.setState(game.state, lastPlayer)
+            keyBoardListener.setState( game.state, lastPlayer )
             const check = keyBoardListener.chekForCollision()
             if(check){
                 game.removeFruit({fruitId: check})
                 game.scoreIncrement({ playerId: lastPlayer, score: 1 })
-                console.log(game.state.players[lastPlayer].score)
+                console.log( game.state.players[lastPlayer].score )
             }
         }
         
         renderScreen()
         function renderScreen (){
-            contextScrem.clearRect(0, 0, 500 , 500)
+            contextScrem.clearRect( 0, 0, 500, 500 )
             
-            for (const playerId in game.state.players){
+            for ( const playerId in game.state.players ){
                 const player = game.state.players[playerId]
                 contextScrem.fillStyle = 'white'
-                contextScrem.fillRect( player.x, player.y, 20, 10)
+                contextScrem.fillRect( player.x, player.y, 20, 10 )
             }
-            for (const fruitsId in game.state.fruits){
+            for ( const fruitsId in game.state.fruits ){
                 const fruit = game.state.fruits[fruitsId]
                 contextScrem.fillStyle = 'green'
-                contextScrem.fillRect( fruit.x, fruit.y, 20, 10)
+                contextScrem.fillRect( fruit.x, fruit.y, 20, 10 )
             }
-            requestAnimationFrame(renderScreen)
+            requestAnimationFrame( renderScreen )
         }
         
     </script>
