@@ -8,13 +8,14 @@ export default class createGame {
 
     addPlayer(command) {
         this.state.players[command.playerId] = {
+            nick: command.nick,
             x: command.playerX,
             y: command.playerY,
             score: command.score
         }
         return command.playerId
     }
-
+    
     removePlayer(command) {
         try{
             delete this.state.players[command.playerId]
@@ -40,11 +41,15 @@ export default class createGame {
     scoreIncrement(command) {
         var temp = this.state.players[command.playerId].score + command.score
         this.state.players[command.playerId]={
+            nick: this.state.players[command.playerId].nick,
+            x: this.state.players[command.playerId].x,
+            y: this.state.players[command.playerId].y,
             score: temp
         }
     }
     movePlayer(command){
         this.state.players[command.playerId] = {
+                nick: this.state.players[command.playerId].nick,
                 x: command.x,
                 y: command.y,
                 score: this.state.players[command.playerId].score
