@@ -14,18 +14,19 @@
             margin-top: 100px; 
             border: solid 10px gray;
             background-color: black;
-            image-rendering: auto | pixelated;
-            image-rendering: crisp-edges;
-            image-rendering: -moz-crisp-edges;
+            image-rendering: pixelated;
+           /* image-rendering: crisp-edges;
+            image-rendering: -moz-crisp-edges; */
             width: 500px;
             height: 500px;
+            
         }
         
     </style>
     
 </head>
 <body>
-    <canvas id="containerGame" class="containerGame"></canvas>
+    <canvas id="containerGame" width="100" height="100" class="containerGame"></canvas>
     <div>
         <label for="nickName">Digite seu nick name:</label>
         <input type="text" id="nickName" placeholder="Nick name..." requerid>
@@ -38,14 +39,19 @@
 
         var Screem = document.getElementById( "containerGame" )
         var contextScrem = Screem.getContext( "2d" )
+
+        var WIDTH = 98
+        var HEIGHT = 98
+
+
         
         const game  = new createGame()
 
         document.getElementById('enviar').onclick  = function addPlayer() {
 
             var nickName = document.getElementById('nickName').value
-            var x = Math.floor(Math.random() * 280)
-            var y = Math.floor(Math.random() * 140)
+            var x = Math.floor(Math.random() * WIDTH)
+            var y = Math.floor(Math.random() * HEIGHT)
 
             const lastPlayer = game.addPlayer({ nick: nickName, playerId: 'player1', playerX: x, playerY: y, score: 0 })
 
@@ -54,41 +60,40 @@
 
         function beginGame(lastPlayer) {
             var fruitID = 0
-            game.addFruit({ fruitId: ++fruitID, fruitX: Math.floor(Math.random() * 280), fruitY: Math.floor(Math.random() * 140) })
-            game.addFruit({ fruitId: ++fruitID, fruitX: Math.floor(Math.random() * 280), fruitY: Math.floor(Math.random() * 140) })
+            game.addFruit({ fruitId: ++fruitID, fruitX: Math.floor(Math.random() * WIDTH), fruitY: Math.floor(Math.random() * HEIGHT) })
+            game.addFruit({ fruitId: ++fruitID, fruitX: Math.floor(Math.random() * WIDTH), fruitY: Math.floor(Math.random() * HEIGHT) })
 
-            const keyBoardListener = new globalRules( game.state, game.state.players[lastPlayer], lastPlayer )
+            const keyBoardListener = new globalRules( game.state, game.state.players[lastPlayer], lastPlayer, HEIGHT, WIDTH)
 
             document.addEventListener( 'keydown', keyCall )
 
             function keyCall( event ){
-                const result = keyBoardListener.keyDownPress( event )
+                var result = keyBoardListener.keyDownPress( event )
                 game.movePlayer({ playerId: lastPlayer, x: result.keyResult.x, y: result.keyResult.y })
-                            
                 keyBoardListener.setState( game.state, lastPlayer )
                 const check = keyBoardListener.chekForCollision()
-                if(check){
+                if(check) {
                     game.removeFruit({ fruitId: check })
                     game.scoreIncrement({ playerId: lastPlayer, score: 1 })
                     console.log( game.state.players[lastPlayer].score )
-                    game.addFruit({ fruitId: ++fruitID, fruitX: Math.floor(Math.random() * 280), fruitY: Math.floor(Math.random() * 140) })
+                    game.addFruit({ fruitId: ++fruitID, fruitX: Math.floor(Math.random() * WIDTH), fruitY: Math.floor(Math.random() * HEIGHT) })
 
                 }
             }
             
             renderScreen()
             function renderScreen() { 
-                contextScrem.clearRect( 0, 0, 500, 500 )
-                
+                contextScrem.clearRect( 0, 0, WIDTH, HEIGHT )
+                contextScrem.scale(1, 1)
                 for ( const playerId in game.state.players ){
                     const player = game.state.players[playerId]
                     contextScrem.fillStyle = 'white'
-                    contextScrem.fillRect( player.x, player.y, 20, 10 )
+                    contextScrem.fillRect( player.x, player.y, 2, 2 )
                 }
                 for ( const fruitsId in game.state.fruits ){
                     const fruit = game.state.fruits[fruitsId]
                     contextScrem.fillStyle = 'green'
-                    contextScrem.fillRect( fruit.x, fruit.y, 20, 10 )
+                    contextScrem.fillRect( fruit.x, fruit.y, 2, 2 )
                 }
                 requestAnimationFrame( renderScreen )
             }

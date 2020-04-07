@@ -1,10 +1,12 @@
 export default class globalRules{
-    constructor(state, lastPlayer, lastPlayerId){
+    constructor(state, lastPlayer, lastPlayerId, HEIGHT, WIDTH){
         this.state = state
         this.players = state.players
         this.fruits = state.fruits
         this.lastPlayer = lastPlayer
         this.lastPlayerId = lastPlayerId
+        this.HEIGHT = HEIGHT
+        this.WIDTH = WIDTH
         //console.log(this.fruits)
     }
     setState(newState, lastPlayerId) {
@@ -14,13 +16,13 @@ export default class globalRules{
     rulesGame(command){
         switch (command){
             case  'borderLimiterXR' :
-                if (this.lastPlayer.x >= 280){ return true } else{ return false }
+                if (this.lastPlayer.x >= this.WIDTH){ return true } else{ return false }
             case  'borderLimiterXL' :
                 if (this.lastPlayer.x <= 0){ return true } else{ return false }
             case  'borderLimiterYT' :
                 if (this.lastPlayer.y <= 0){ return true } else{ return false }
             case  'borderLimiterYB' :
-                if (this.lastPlayer.y >= 140){ return true } else{ return false }
+                if (this.lastPlayer.y >= this.HEIGHT){ return true } else{ return false }
                
         }
     }
@@ -48,13 +50,23 @@ export default class globalRules{
                 }
                 break
             case 'ArrowDown' :
-                if (!this.rulesGame('borderLimiterYB')) { return {x: this.lastPlayer.x, y: this.lastPlayer.y+1} }
+                if (!this.rulesGame('borderLimiterYB')) { 
+                    return {x: this.lastPlayer.x, y: this.lastPlayer.y+1} 
+                }else {
+                    return {x: this.lastPlayer.x, y: this.lastPlayer.y}
+                }
                 break
             case'ArrowRight' : 
-                if (!this.rulesGame('borderLimiterXR')) { return {x: this.lastPlayer.x+1, y: this.lastPlayer.y} }
+                if (!this.rulesGame('borderLimiterXR')) { return {x: this.lastPlayer.x+1, y: this.lastPlayer.y} 
+                }else {
+                    return {x: this.lastPlayer.x, y: this.lastPlayer.y}
+                }
                 break
             case'ArrowLeft' : 
-                if (!this.rulesGame('borderLimiterXL')) { return {x: this.lastPlayer.x-1, y: this.lastPlayer.y} }
+                if (!this.rulesGame('borderLimiterXL')) { return {x: this.lastPlayer.x-1, y: this.lastPlayer.y} 
+                }else {
+                    return {x: this.lastPlayer.x, y: this.lastPlayer.y}
+                }
                 break
             default :
                 console.log(`wrong key pressed`)
