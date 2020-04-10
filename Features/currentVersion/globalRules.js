@@ -1,5 +1,5 @@
-export default class globalRules{
-    constructor(state, lastPlayer, lastPlayerId, HEIGHT, WIDTH){
+export default class globalRules {
+    constructor(state, lastPlayer, lastPlayerId, HEIGHT, WIDTH) {
         this.state = state
         this.players = state.players
         this.fruits = state.fruits
@@ -13,27 +13,27 @@ export default class globalRules{
         this.state = newState
         this.lastPlayer = newState.players[lastPlayerId]
     }
-    rulesGame(command){
-        switch (command){
+    rulesGame(command) {
+        switch (command) {
             case  'borderLimiterXR' :
-                if (this.lastPlayer.x >= this.WIDTH){ return true } else{ return false }
+                if ( this.lastPlayer.x >= this.WIDTH ) { return true }else { return false }
             case  'borderLimiterXL' :
-                if (this.lastPlayer.x <= 0){ return true } else{ return false }
+                if ( this.lastPlayer.x <= 0) { return true }else { return false }
             case  'borderLimiterYT' :
-                if (this.lastPlayer.y <= 0){ return true } else{ return false }
+                if (this.lastPlayer.y <= 0) { return true }else { return false }
             case  'borderLimiterYB' :
-                if (this.lastPlayer.y >= this.HEIGHT){ return true } else{ return false }
+                if (this.lastPlayer.y >= this.HEIGHT) { return true }else { return false }
                
         }
     }
        
     
-    chekForCollision () {
+    chekForCollision() {
         //console.log()
         //console.log(`${fruitId} X: ${lastPlayer.x} Y: ${lastPlayer.y} Fruit X: ${fruit.x} Y: ${fruit.y} `)
-        for(const fruitId in this.fruits){
+        for( const fruitId in this.fruits ) {
             //console.log(fruitId)
-            if( this.fruits[fruitId].x === this.lastPlayer.x && this.fruits[fruitId].y === this.lastPlayer.y){
+            if( this.fruits[fruitId].x === this.lastPlayer.x && this.fruits[fruitId].y === this.lastPlayer.y ) {
             console.log(`Collision bitween ${fruitId} and ${this.lastPlayerId}`)
             return fruitId
             }
@@ -41,31 +41,31 @@ export default class globalRules{
         return false
     }
         
-    aceptedKeys(keypressd){
+    aceptedKeys(keypressd) {
         switch (keypressd) {
             case 'ArrowUp':
-                if (!this.rulesGame('borderLimiterYT')) {
+                if ( !this.rulesGame('borderLimiterYT') ) {
                     //console.log(this.lastPlayer)
-                    return  {x: this.lastPlayer.x, y: this.lastPlayer.y-1}
+                    return  { x: this.lastPlayer.x, y: this.lastPlayer.y-1 }
                 }
                 break
             case 'ArrowDown' :
-                if (!this.rulesGame('borderLimiterYB')) { 
-                    return {x: this.lastPlayer.x, y: this.lastPlayer.y+1} 
+                if ( !this.rulesGame('borderLimiterYB') ) { 
+                    return { x: this.lastPlayer.x, y: this.lastPlayer.y+1 } 
                 }else {
-                    return {x: this.lastPlayer.x, y: this.lastPlayer.y}
+                    return { x: this.lastPlayer.x, y: this.lastPlayer.y }
                 }
                 break
             case'ArrowRight' : 
-                if (!this.rulesGame('borderLimiterXR')) { return {x: this.lastPlayer.x+1, y: this.lastPlayer.y} 
+                if ( !this.rulesGame('borderLimiterXR') ) { return { x: this.lastPlayer.x+1, y: this.lastPlayer.y } 
                 }else {
-                    return {x: this.lastPlayer.x, y: this.lastPlayer.y}
+                    return { x: this.lastPlayer.x, y: this.lastPlayer.y }
                 }
                 break
             case'ArrowLeft' : 
-                if (!this.rulesGame('borderLimiterXL')) { return {x: this.lastPlayer.x-1, y: this.lastPlayer.y} 
+                if ( !this.rulesGame('borderLimiterXL') ) { return { x: this.lastPlayer.x-1, y: this.lastPlayer.y } 
                 }else {
-                    return {x: this.lastPlayer.x, y: this.lastPlayer.y}
+                    return { x: this.lastPlayer.x, y: this.lastPlayer.y }
                 }
                 break
             default :
