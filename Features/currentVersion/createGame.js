@@ -1,5 +1,5 @@
 export default class createGame {
-    constructor(){
+    constructor() {
         this.state = {
                 players: {},
                 fruits: {}
@@ -33,7 +33,7 @@ export default class createGame {
 
     removeFruit(command) {
         try{
-        delete this.state.fruits[command.fruitId]
+            delete this.state.fruits[command.fruitId]
         }catch(e){
             console.log(e)
         }
@@ -47,7 +47,7 @@ export default class createGame {
             score: temp
         }
     }
-    movePlayer(command){
+    movePlayer(command) {
         this.state.players[command.playerId] = {
                 nick: this.state.players[command.playerId].nick,
                 x: command.x,
