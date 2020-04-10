@@ -83,7 +83,7 @@
             
             renderScreen()
             function renderScreen() { 
-                contextScrem.clearRect( 0, 0, WIDTH, HEIGHT )
+                contextScrem.clearRect( 0, 0, WIDTH+2, HEIGHT+2 )
                 contextScrem.scale(1, 1)
                 for ( const playerId in game.state.players ){
                     const player = game.state.players[playerId]

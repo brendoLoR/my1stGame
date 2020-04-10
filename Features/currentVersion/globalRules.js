@@ -47,27 +47,31 @@ export default class globalRules {
                 if ( !this.rulesGame('borderLimiterYT') ) {
                     //console.log(this.lastPlayer)
                     return  { x: this.lastPlayer.x, y: this.lastPlayer.y-1 }
+                }else {
+                    return { x: this.lastPlayer.x, y: this.lastPlayer.y }
                 }
-                break
+                
             case 'ArrowDown' :
                 if ( !this.rulesGame('borderLimiterYB') ) { 
                     return { x: this.lastPlayer.x, y: this.lastPlayer.y+1 } 
                 }else {
                     return { x: this.lastPlayer.x, y: this.lastPlayer.y }
                 }
-                break
+                
             case'ArrowRight' : 
-                if ( !this.rulesGame('borderLimiterXR') ) { return { x: this.lastPlayer.x+1, y: this.lastPlayer.y } 
+                if ( !this.rulesGame('borderLimiterXR') ) { 
+                    return { x: this.lastPlayer.x+1, y: this.lastPlayer.y } 
                 }else {
                     return { x: this.lastPlayer.x, y: this.lastPlayer.y }
                 }
-                break
+                
             case'ArrowLeft' : 
-                if ( !this.rulesGame('borderLimiterXL') ) { return { x: this.lastPlayer.x-1, y: this.lastPlayer.y } 
+                if ( !this.rulesGame('borderLimiterXL') ) { 
+                    return { x: this.lastPlayer.x-1, y: this.lastPlayer.y } 
                 }else {
                     return { x: this.lastPlayer.x, y: this.lastPlayer.y }
                 }
-                break
+                
             default :
                 console.log(`wrong key pressed`)
                 break
