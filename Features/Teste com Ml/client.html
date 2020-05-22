@@ -1,0 +1,154 @@
+<DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <style>
+        body {
+            text-align: center;
+            background-color: gray;
+        } 
+        #containerGame{
+            margin-top: 100px; 
+            border: solid 10px gray;
+            background-color: black;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            image-rendering: -moz-crisp-edges; 
+            width: 500px;
+            height: 500px;
+            
+        }
+        
+    </style>
+    <script src="./ML/Matrix.js"></script>
+    <script src="./ML/NeuralNetwork.js"></script>
+    <script src="./ML/index.js"></script>
+    
+</head>
+<body>
+    <canvas id="containerGame" width="100" height="100" class="containerGame"></canvas>
+    <div>
+        <label for="nickName">Digite seu nick name:</label>
+        <input type="text" id="nickName" placeholder="Nick name..." requerid>
+        <button id="enviar" onclick="">Enviar.</button>
+        <button id="geracao" onclick="">Nova Geração.</button>
+    </div>
+    
+    <script type="module">
+        import globalRules from './globalRules.js'
+        import createGame from './createGame.js'
+
+        var Screem = document.getElementById( "containerGame" )
+        var contextScrem = Screem.getContext( "2d" )
+
+        var WIDTH = 98
+        var HEIGHT = 98
+        var fruitID = 0
+        var lastPlayer = []
+        
+        const game  = new createGame()
+
+        document.getElementById('enviar').onclick  = function addPlayer() {
+            game.removeAllPlayers()
+
+            var nickName = document.getElementById('nickName').value
+            var x = Math.floor(Math.random() * WIDTH)
+            var y = Math.floor(Math.random() * HEIGHT)
+            
+            for(let i = 0; i < 1000; i++){
+                let neural = new NeuralNetwork(2, 98, 4, false, null)
+                lastPlayer = game.addPlayer({ nick: nickName, playerId: i, playerX: x, playerY: y, score: 0, IA: neural })
+            }
+            
+        
+            //game.print()
+            beginGame()
+        }
+        document.getElementById('geracao').onclick = function novaGeracao(){
+            var nickName = document.getElementById('nickName').value
+            var x = Math.floor(Math.random() * WIDTH)
+            var y = Math.floor(Math.random() * HEIGHT)
+
+            let bestPlayerId = game.getBestScore()
+            let bestPlayer = game.state.players[bestPlayerId].IA
+            game.removeAllPlayers()
+            for(let i = 0; i < 1000; i++){
+                let neural = new NeuralNetwork(2, 98, 4, true, bestPlayer)
+                game.addPlayer({ nick: nickName, playerId: i, playerX: x, playerY: y, score: 0, IA: neural })
+            }
+        }
+        
+        function beginGame(lastPlayer) {
+            
+            game.addFruit({ fruitId: ++fruitID, fruitX: Math.floor(Math.random() * WIDTH), fruitY: Math.floor(Math.random() * HEIGHT) })
+           // game.addFruit({ fruitId: ++fruitID, fruitX: Math.floor(Math.random() * WIDTH), fruitY: Math.floor(Math.random() * HEIGHT) })
+
+            const keyBoardListener = new globalRules( game.state, game.state.players[lastPlayer], lastPlayer, HEIGHT, WIDTH)
+            //game.trainMovement({playerId: lastPlayer})
+           // game.predictMovement({playerId: lastPlayer, fruitId: fruitID})
+
+            document.addEventListener( 'keydownIA', keyCall )
+
+            function keyCall( event ){
+                //console.log(event)
+                let playerId = event.detail.playerId
+                
+                var result = keyBoardListener.keyDownPress( event, game.state.players[playerId] )
+                if(result){
+                    game.movePlayer({ playerId: playerId, x: result.keyResult.x, y: result.keyResult.y })
+                }else{
+                    game.removePlayer[playerId]
+                }
+                keyBoardListener.setState( game.state, playerId )
+                const check = keyBoardListener.chekForCollision(game.state.players[playerId])
+                if(check) {
+                    game.state.players[playerId].color = 'red'
+                    game.removeFruit({ fruitId: check })
+                    game.scoreIncrement({ playerId: playerId, score: 1 })
+                    console.log( game.state.players[playerId].score )
+                    game.addFruit({ fruitId: ++fruitID, fruitX: Math.floor(Math.random() * WIDTH), fruitY: Math.floor(Math.random() * HEIGHT) })
+
+                }
+            }
+            function predict(playerId){
+                let keyEvent = game.predictMovement({playerId: playerId, fruitId: fruitID})
+                document.dispatchEvent(keyEvent);
+            }
+            renderScreen()
+            function renderScreen() { 
+                //sleep(25)
+                
+                contextScrem.clearRect( 0, 0, WIDTH+2, HEIGHT+2 )
+                contextScrem.scale(1, 1)
+                for ( const playerId in game.state.players ){
+                    predict(playerId)
+                    const player = game.state.players[playerId]
+                    contextScrem.fillStyle = game.state.players[playerId].color
+                    contextScrem.fillRect( player.x, player.y, 2, 2 )
+                }
+                for ( const fruitsId in game.state.fruits ){
+                    const fruit = game.state.fruits[fruitsId]
+                    contextScrem.fillStyle = 'green'
+                    contextScrem.fillRect( fruit.x, fruit.y, 2, 2 )
+                }
+                requestAnimationFrame( renderScreen )
+            }
+            function sleep(milliseconds) {
+                const date = Date.now();
+                let currentDate = null;
+                do {
+                    currentDate = Date.now();
+                } while (currentDate - date < milliseconds);
+            }
+        }
+        
+        
+    </script>
+    
+</body>
+</html>
