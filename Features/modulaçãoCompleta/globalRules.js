@@ -1,5 +1,5 @@
-export default class globalRules{
-    constructor(state, lastPlayer, lastPlayerId){
+export default class globalRules {
+    constructor( state, lastPlayer, lastPlayerId ){
         this.state = state
         this.players = state.players
         this.fruits = state.fruits
@@ -14,24 +14,22 @@ export default class globalRules{
     rulesGame(command){
         switch (command){
             case  'borderLimiterXR' :
-                if (this.lastPlayer.x >= 280){ return true } else{ return false }
+                if ( this.lastPlayer.x >= 280) { return true } else { return false }
             case  'borderLimiterXL' :
-                if (this.lastPlayer.x <= 0){ return true } else{ return false }
+                if ( this.lastPlayer.x <= 0) { return true } else { return false }
             case  'borderLimiterYT' :
-                if (this.lastPlayer.y <= 0){ return true } else{ return false }
+                if ( this.lastPlayer.y <= 0) { return true } else { return false }
             case  'borderLimiterYB' :
-                if (this.lastPlayer.y >= 140){ return true } else{ return false }
+                if ( this.lastPlayer.y >= 140) { return true } else { return false }
                
         }
     }
        
     
     chekForCollision () {
-        //console.log()
-        //console.log(`${fruitId} X: ${lastPlayer.x} Y: ${lastPlayer.y} Fruit X: ${fruit.x} Y: ${fruit.y} `)
+        
         for(const fruitId in this.fruits){
-            //console.log(fruitId)
-            if( this.fruits[fruitId].x === this.lastPlayer.x && this.fruits[fruitId].y === this.lastPlayer.y){
+            if( this.fruits[fruitId].x === this.lastPlayer.x && this.fruits[fruitId].y === this.lastPlayer.y ){
             console.log(`Collision bitween ${fruitId} and ${this.lastPlayerId}`)
             return fruitId
             }
