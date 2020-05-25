@@ -34,11 +34,11 @@ class Matrix{
             return Math.random()* 2 - 1;
         }); 
     }
-    static randomize_base(A, B){
+    static randomize_base(A, B, mult){
         let m = new Matrix(A.rows, A.cols)
         m.map((num, i, j) => {
-            let min = B.data[i][j]+(Math.random()*(-0.001))
-            let max = B.data[i][j]+(Math.random()*(min+0.001)) + min
+            let min = B.data[i][j]+(Math.random()*(-mult))
+            let max = B.data[i][j]+(Math.random()*(min+mult)) + min
             A.data[i][j] =  Math.random() * (max - min) + min
         });
         return A

@@ -10,7 +10,7 @@ function dsigmoid(x){
 
 
 class NeuralNetwork{
-    constructor(i_nodes, h_nodes, o_nodes, base, neural_base){
+    constructor(i_nodes, h_nodes, o_nodes, base, neural_base, mult){
         this.i_nodes = i_nodes;
         this.h_nodes = h_nodes;
         this.o_nodes = o_nodes;
@@ -29,14 +29,14 @@ class NeuralNetwork{
         
         if(base){
             this.weight_ih = new Matrix(this.h_nodes, this.i_nodes);
-            this.weight_ih = Matrix.randomize_base(this.weight_ih, neural_base.weight_ih);
+            this.weight_ih = Matrix.randomize_base(this.weight_ih, neural_base.weight_ih, mult);
             this.weight_ho = new Matrix(this.h_nodes, this.o_nodes);
-            this.weight_ho = Matrix.randomize_base(this.weight_ho, neural_base.weight_ho);
+            this.weight_ho = Matrix.randomize_base(this.weight_ho, neural_base.weight_ho, mult);
 
             this.bias_ih = new Matrix(this.h_nodes, 1);
             this.bias_ho = new Matrix(this.o_nodes, 1);
-            this.bias_ih = Matrix.randomize_base(this.bias_ih, neural_base.bias_ih);
-            this.bias_ho = Matrix.randomize_base(this.bias_ho, neural_base.bias_ho);
+            this.bias_ih = Matrix.randomize_base(this.bias_ih, neural_base.bias_ih, mult);
+            this.bias_ho = Matrix.randomize_base(this.bias_ho, neural_base.bias_ho, mult);
         }
         
 

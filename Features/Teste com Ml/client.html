@@ -37,6 +37,7 @@
         <input type="text" id="nickName" placeholder="Nick name..." requerid>
         <button id="enviar" onclick="">Enviar.</button>
         <button id="geracao" onclick="">Nova Geração.</button>
+        <button id="geracao-r" onclick="">Repetir Geração.</button>
     </div>
     
     <script type="module">
@@ -45,40 +46,53 @@
 
         var Screem = document.getElementById( "containerGame" )
         var contextScrem = Screem.getContext( "2d" )
-
+        var mult = 100
         var WIDTH = 98
         var HEIGHT = 98
         var fruitID = 0
         var lastPlayer = []
         
         const game  = new createGame()
-
+        beginGame()
         document.getElementById('enviar').onclick  = function addPlayer() {
             game.removeAllPlayers()
-
+            
             var nickName = document.getElementById('nickName').value
             var x = Math.floor(Math.random() * WIDTH)
             var y = Math.floor(Math.random() * HEIGHT)
             
             for(let i = 0; i < 1000; i++){
-                let neural = new NeuralNetwork(2, 98, 4, false, null)
+                let neural = new NeuralNetwork(2, 20, 4, false, null, mult)
                 lastPlayer = game.addPlayer({ nick: nickName, playerId: i, playerX: x, playerY: y, score: 0, IA: neural })
             }
             
         
             //game.print()
-            beginGame()
+            
         }
         document.getElementById('geracao').onclick = function novaGeracao(){
             var nickName = document.getElementById('nickName').value
             var x = Math.floor(Math.random() * WIDTH)
             var y = Math.floor(Math.random() * HEIGHT)
-
+            mult = mult/10
             let bestPlayerId = game.getBestScore()
             let bestPlayer = game.state.players[bestPlayerId].IA
             game.removeAllPlayers()
             for(let i = 0; i < 1000; i++){
-                let neural = new NeuralNetwork(2, 98, 4, true, bestPlayer)
+                let neural = new NeuralNetwork(2, 20, 4, true, bestPlayer, mult)
+                game.addPlayer({ nick: nickName, playerId: i, playerX: x, playerY: y, score: 0, IA: neural })
+            }
+        }
+        document.getElementById('geracao-r').onclick = function novaGeracao(){
+            var nickName = document.getElementById('nickName').value
+            var x = Math.floor(Math.random() * WIDTH)
+            var y = Math.floor(Math.random() * HEIGHT)
+            mult = 100
+            let bestPlayerId = game.getBestScore()
+           // let bestPlayer = game.state.players[bestPlayerId].IA
+            game.removeAllPlayers()
+            for(let i = 0; i < 1000; i++){
+                let neural = new NeuralNetwork(2, 20, 4, false, null, 1000)
                 game.addPlayer({ nick: nickName, playerId: i, playerX: x, playerY: y, score: 0, IA: neural })
             }
         }
@@ -107,7 +121,11 @@
                 keyBoardListener.setState( game.state, playerId )
                 const check = keyBoardListener.chekForCollision(game.state.players[playerId])
                 if(check) {
+                    //let bestPlayerId = game.getBestScore()
+                    
                     game.state.players[playerId].color = 'red'
+                    //if ( bestPlayerId ) {game.state.players[bestPlayerId].color = 'yellow'}
+
                     game.removeFruit({ fruitId: check })
                     game.scoreIncrement({ playerId: playerId, score: 1 })
                     console.log( game.state.players[playerId].score )
@@ -122,13 +140,18 @@
             renderScreen()
             function renderScreen() { 
                 //sleep(25)
-                
+                let bestPlayerId = game.getBestScore()
                 contextScrem.clearRect( 0, 0, WIDTH+2, HEIGHT+2 )
                 contextScrem.scale(1, 1)
                 for ( const playerId in game.state.players ){
                     predict(playerId)
                     const player = game.state.players[playerId]
-                    contextScrem.fillStyle = game.state.players[playerId].color
+                    if(playerId != bestPlayerId){
+                        contextScrem.fillStyle = game.state.players[playerId].color
+                    }else{
+                        contextScrem.fillStyle = 'yellow'
+                    }
+                    
                     contextScrem.fillRect( player.x, player.y, 2, 2 )
                 }
                 for ( const fruitsId in game.state.fruits ){
