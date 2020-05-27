@@ -151,20 +151,42 @@ export default class createGame {
             }
         }
     }
+
+    findFruit(command){
+        let playerId = command.playerId
+        let nerarest = 200
+        let nerarestId = null
+        for(const fruitId in this.state.fruits){
+            let distance = Math.abs(this.state.players[playerId].x - this.state.fruits[fruitId].x + this.state.players[playerId].y - this.state.fruits[fruitId].y)
+            //console.log(distance)
+            if (distance < nerarest){
+                nerarest = distance
+                nerarestId = fruitId
+            }
+        }
+        //console.log(nerarestId)
+        return nerarestId
+    }
+
     predictMovement(command){
         let playerId = command.playerId
         let player = this.state.players[playerId]
-        let fruit = this.state.fruits[command.fruitId]
-
+        let fruitId = this.findFruit({playerId: playerId})
+        if(fruitId){
+            var fruit = this.state.fruits[fruitId]
+            //console.log('entrou')
+        }else{
+            var fruit = this.state.fruits[command.fruitId]
+            //console.log('não entrou')
+        }
 
         let distance = [player.x - fruit.x, player.y - fruit.y]
         
-        //console.table(player)
-        //console.table(fruit)
+        
 
         let output = player.IA.predict(distance)
         let key = this.max_array_element(output)
-        //console.table(output)
+
         switch(key){
             case 0:
                 return this.simulateKeyPress("ArrowUp", playerId)
@@ -182,6 +204,7 @@ export default class createGame {
         }
         
     }
+
     simulateKeyPress(character, playerId) {
         let keyevent = new CustomEvent('keydownIA', {'detail': {'key': character, 'playerId': playerId}})
         return keyevent
